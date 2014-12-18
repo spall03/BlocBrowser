@@ -13,6 +13,7 @@
 		C64D32531A3FC3220096F52B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C64D32521A3FC3220096F52B /* Images.xcassets */; };
 		C64D32561A3FC3220096F52B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C64D32541A3FC3220096F52B /* LaunchScreen.xib */; };
 		C64D32621A3FC3220096F52B /* BlocBrowserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C64D32611A3FC3220096F52B /* BlocBrowserTests.m */; };
+		C6C4C2BD1A42498B00FB5381 /* AwesomeFloatingToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = C6C4C2BC1A42498B00FB5381 /* AwesomeFloatingToolbar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,8 @@
 		C64D325B1A3FC3220096F52B /* BlocBrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlocBrowserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C64D32601A3FC3220096F52B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C64D32611A3FC3220096F52B /* BlocBrowserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlocBrowserTests.m; sourceTree = "<group>"; };
+		C6C4C2BB1A42498B00FB5381 /* AwesomeFloatingToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AwesomeFloatingToolbar.h; sourceTree = "<group>"; };
+		C6C4C2BC1A42498B00FB5381 /* AwesomeFloatingToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AwesomeFloatingToolbar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,8 @@
 			children = (
 				C64D32491A3FC3220096F52B /* AppDelegate.h */,
 				C64D324A1A3FC3220096F52B /* AppDelegate.m */,
+				C6C4C2BB1A42498B00FB5381 /* AwesomeFloatingToolbar.h */,
+				C6C4C2BC1A42498B00FB5381 /* AwesomeFloatingToolbar.m */,
 				C64D324C1A3FC3220096F52B /* WebBrowserViewController.h */,
 				C64D324D1A3FC3220096F52B /* WebBrowserViewController.m */,
 				C64D32521A3FC3220096F52B /* Images.xcassets */,
@@ -218,6 +223,7 @@
 				C64D324E1A3FC3220096F52B /* WebBrowserViewController.m in Sources */,
 				C64D324B1A3FC3220096F52B /* AppDelegate.m in Sources */,
 				C64D32481A3FC3220096F52B /* main.m in Sources */,
+				C6C4C2BD1A42498B00FB5381 /* AwesomeFloatingToolbar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
