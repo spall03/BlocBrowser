@@ -15,6 +15,9 @@
 @optional
 
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWithTitle:(NSString *)title;
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset; //main view will decide if toolbar can move around or not
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didPinchToolbar:(CGFloat)scale;
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didFireLongPress:(CGPoint)location;
 
 @end
 

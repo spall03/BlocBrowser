@@ -14,6 +14,10 @@
 @property (nonatomic, strong) NSArray *colors;
 @property (nonatomic, strong) NSArray *labels;
 @property (nonatomic, weak) UILabel *currentLabel;
+@property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+@property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
+@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
 
 @end
 
@@ -59,9 +63,110 @@
         for (UILabel *thisLabel in self.labels) {
             [self addSubview:thisLabel]; //add label views to main view
         }
+        
+        self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];
+        [self addGestureRecognizer:self.tapGesture];
+        self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
+        [self addGestureRecognizer:self.panGesture];
+        self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchFired:)];
+        [self addGestureRecognizer:self.pinchGesture];
+        self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressFired:)];
+        [self addGestureRecognizer:self.longPressGesture];
+        
+        
     }
     
     return self;
+}
+
+- (void) panFired:(UIPanGestureRecognizer *)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateChanged) {
+        CGPoint translation = [recognizer translationInView:self];
+        
+        NSLog(@"New translation: %@", NSStringFromCGPoint(translation));
+        
+        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToPanWithOffset:)]) {
+            [self.delegate floatingToolbar:self didTryToPanWithOffset:translation];
+        }
+        
+        [recognizer setTranslation:CGPointZero inView:self]; //resets translation calc
+    }
+}
+
+- (void) tapFired:(UITapGestureRecognizer *)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+        CGPoint location = [recognizer locationInView:self];
+        UIView *tappedView = [self hitTest:location withEvent:nil];
+        
+        if ([self.labels containsObject:tappedView]) {
+            if ([self.delegate respondsToSelector:@selector(floatingToolbar:didSelectButtonWithTitle:)]) {
+                [self.delegate floatingToolbar:self didSelectButtonWithTitle:((UILabel *)tappedView).text];
+            }
+        }
+    }
+}
+
+- (void) pinchFired:(UIPinchGestureRecognizer *) recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateRecognized)
+    {
+        CGPoint pinch = [recognizer locationInView:self];
+        CGFloat scale = [recognizer scale];
+        NSLog(@"New pinch: %@", NSStringFromCGPoint(pinch));
+        NSLog(@"New scale: %lf", scale);
+        UIView *tappedView = [self hitTest:pinch withEvent:nil];
+        
+        if ([self.labels containsObject:tappedView]) {
+            if ([self.delegate respondsToSelector:@selector(floatingToolbar:didPinchToolbar:)]) {
+                [self.delegate floatingToolbar:self didPinchToolbar:scale];
+            }
+        }
+        
+    }
+    
+    
+}
+
+- (void) longPressFired:(UILongPressGestureRecognizer *) recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateRecognized)
+    {
+        CGPoint location = [recognizer locationInView:self];
+        NSLog(@"New long press: %@", NSStringFromCGPoint(location));
+        [self randomizeColors];
+//        UIView *tappedView = [self hitTest:location withEvent:nil];
+//        
+////        if ([self.labels containsObject:tappedView]) {
+////            
+////            
+////
+////            }
+        }
+    
+}
+
+- (void) randomizeColors {
+    
+    NSLog(@"This should work");
+    
+    NSMutableArray *newColors;
+    
+    for (NSInteger i = 0; i < self.colors.count; i++)
+    {
+
+        NSInteger randomRedValue = arc4random() % 256;
+        NSInteger randomGreenValue = arc4random() % 256;
+        NSInteger randomBlueValue = arc4random() % 256;
+        
+        UIColor *newColor = [UIColor colorWithRed:randomRedValue green:randomGreenValue blue:randomBlueValue alpha:1]; //create new random color
+        
+        [newColors addObject:newColor]; //add that color to the color array
+        
+    }
+    
+    self.colors = newColors; //replace color set with new randomized colors
+    
+    
 }
 
 - (void) layoutSubviews {
@@ -106,47 +211,7 @@
 }
 
 
-//finger comes down
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    UILabel *label = [self labelFromTouches:touches withEvent:event];
-    
-    self.currentLabel = label;
-    self.currentLabel.alpha = 0.5; //dim touched label
-}
 
-//finger moves around
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    UILabel *label = [self labelFromTouches:touches withEvent:event];
-    
-    if (self.currentLabel != label) {
-        // The label being touched is no longer the initial label
-        self.currentLabel.alpha = 1;
-    } else {
-        // The label being touched is the initial label
-        self.currentLabel.alpha = 0.5;
-    }
-}
-
-//finger is removed. don't quite understand this one
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    UILabel *label = [self labelFromTouches:touches withEvent:event];
-    
-    if (self.currentLabel == label) {
-        NSLog(@"Label tapped: %@", self.currentLabel.text);
-        
-        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didSelectButtonWithTitle:)]) {
-            [self.delegate floatingToolbar:self didSelectButtonWithTitle:self.currentLabel.text];
-        }
-    }
-    
-    self.currentLabel.alpha = 1;
-    self.currentLabel = nil;
-}
-
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-    self.currentLabel.alpha = 1;
-    self.currentLabel = nil;
-}
 
 #pragma mark - Button Enabling
 

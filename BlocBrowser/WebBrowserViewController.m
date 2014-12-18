@@ -117,6 +117,34 @@
     }
 }
 
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset {
+    CGPoint startingPoint = toolbar.frame.origin;
+    CGPoint newPoint = CGPointMake(startingPoint.x + offset.x, startingPoint.y + offset.y);
+    
+    CGRect potentialNewFrame = CGRectMake(newPoint.x, newPoint.y, CGRectGetWidth(toolbar.frame), CGRectGetHeight(toolbar.frame));
+    
+    if (CGRectContainsRect(self.view.bounds, potentialNewFrame)) { //the toolbar won't move off the screen
+        toolbar.frame = potentialNewFrame;
+    }
+}
+
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didPinchToolbar:(CGFloat)scale
+{
+    
+    NSLog(@"I pinched");
+    CGRect newFrame = CGRectMake(toolbar.frame.origin.x, toolbar.frame.origin.y, (CGRectGetWidth(toolbar.frame)*scale), (CGRectGetHeight(toolbar.frame)*scale)); //scale the new toolbar's sides by the amount pinched
+    toolbar.frame = newFrame;
+    
+    
+    
+}
+
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didFireLongPress:(CGPoint)location
+{
+    
+    
+}
+
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
