@@ -143,11 +143,6 @@
                                                                
 }
 
-- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didFireLongPress:(CGPoint)location
-{
-    
-    
-}
 
 #pragma mark - UITextFieldDelegate
 
