@@ -131,12 +131,16 @@
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didPinchToolbar:(CGFloat)scale
 {
     
-    NSLog(@"I pinched");
-    CGRect newFrame = CGRectMake(toolbar.frame.origin.x, toolbar.frame.origin.y, (CGRectGetWidth(toolbar.frame)*scale), (CGRectGetHeight(toolbar.frame)*scale)); //scale the new toolbar's sides by the amount pinched
-    toolbar.frame = newFrame;
+    CGAffineTransform potentialTransform = CGAffineTransformMakeScale(scale, scale);
     
+    CGRect potentialNewFrame = toolbar.frame;
     
+    potentialNewFrame = CGRectApplyAffineTransform(potentialNewFrame, potentialTransform);
     
+    if (CGRectContainsRect(self.view.bounds, potentialNewFrame)) {
+        toolbar.transform = potentialTransform;
+    }
+                                                               
 }
 
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didFireLongPress:(CGPoint)location

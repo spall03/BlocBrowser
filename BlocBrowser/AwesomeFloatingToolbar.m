@@ -22,6 +22,8 @@
 @end
 
 
+
+
 @implementation AwesomeFloatingToolbar
 
 - (instancetype) initWithFourTitles:(NSArray *)titles {
@@ -108,7 +110,7 @@
 
 - (void) pinchFired:(UIPinchGestureRecognizer *) recognizer
 {
-    if (recognizer.state == UIGestureRecognizerStateRecognized)
+    if (recognizer.state == UIGestureRecognizerStateChanged)
     {
         CGPoint pinch = [recognizer locationInView:self];
         CGFloat scale = [recognizer scale];
@@ -116,14 +118,22 @@
         NSLog(@"New scale: %lf", scale);
         UIView *tappedView = [self hitTest:pinch withEvent:nil];
         
-        if ([self.labels containsObject:tappedView]) {
+        if ([tappedView isEqual:self]) {
             if ([self.delegate respondsToSelector:@selector(floatingToolbar:didPinchToolbar:)]) {
                 [self.delegate floatingToolbar:self didPinchToolbar:scale];
+                
             }
         }
         
+        
+    
+    
+    
     }
     
+    if (recognizer.state == UIGestureRecognizerStateEnded) {
+        NSLog(@"gesture is over, %@", NSStringFromCGRect(self.frame));
+    }
     
 }
 
@@ -134,37 +144,24 @@
         CGPoint location = [recognizer locationInView:self];
         NSLog(@"New long press: %@", NSStringFromCGPoint(location));
         [self randomizeColors];
-//        UIView *tappedView = [self hitTest:location withEvent:nil];
-//        
-////        if ([self.labels containsObject:tappedView]) {
-////            
-////            
-////
-////            }
-        }
+    }
     
 }
 
 - (void) randomizeColors {
     
-    NSLog(@"This should work");
-    
-    NSMutableArray *newColors;
-    
-    for (NSInteger i = 0; i < self.colors.count; i++)
+    for (UILabel *thisLabel in self.labels)
     {
 
-        NSInteger randomRedValue = arc4random() % 256;
-        NSInteger randomGreenValue = arc4random() % 256;
-        NSInteger randomBlueValue = arc4random() % 256;
+        CGFloat randomRedValue = (20 + (arc4random() % 200))/255.0; //pick colors such that text is still readable
+        CGFloat randomGreenValue = (20 + (arc4random() % 200))/255.0;
+        CGFloat randomBlueValue = (20 + (arc4random() % 200))/255.0;
         
         UIColor *newColor = [UIColor colorWithRed:randomRedValue green:randomGreenValue blue:randomBlueValue alpha:1]; //create new random color
         
-        [newColors addObject:newColor]; //add that color to the color array
+        thisLabel.backgroundColor = newColor;
         
     }
-    
-    self.colors = newColors; //replace color set with new randomized colors
     
     
 }
@@ -172,33 +169,39 @@
 - (void) layoutSubviews {
     // set the frames for the 4 labels
     
-    for (UILabel *thisLabel in self.labels) {
-        NSUInteger currentLabelIndex = [self.labels indexOfObject:thisLabel];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // set the frames for the 4 labels
         
-        CGFloat labelHeight = CGRectGetHeight(self.bounds) / 2; //split view up 2x2
-        CGFloat labelWidth = CGRectGetWidth(self.bounds) / 2;
-        CGFloat labelX = 0;
-        CGFloat labelY = 0;
-        
-        // adjust labelX and labelY for each label
-        if (currentLabelIndex < 2) {
-            // 0 or 1, so on top
-            labelY = 0;
-        } else {
-            // 2 or 3, so on bottom
-            labelY = CGRectGetHeight(self.bounds) / 2;
+        for (UILabel *thisLabel in self.labels) {
+            NSUInteger currentLabelIndex = [self.labels indexOfObject:thisLabel];
+            
+            CGFloat labelHeight = CGRectGetHeight(self.bounds) / 2; //split view up 2x2
+            CGFloat labelWidth = CGRectGetWidth(self.bounds) / 2;
+            CGFloat labelX = 0;
+            CGFloat labelY = 0;
+            
+            // adjust labelX and labelY for each label
+            if (currentLabelIndex < 2) {
+                // 0 or 1, so on top
+                labelY = 0;
+            } else {
+                // 2 or 3, so on bottom
+                labelY = CGRectGetHeight(self.bounds) / 2;
+            }
+            
+            if (currentLabelIndex % 2 == 0) { // is currentLabelIndex evenly divisible by 2?
+                // 0 or 2, so on the left
+                labelX = 0;
+            } else {
+                // 1 or 3, so on the right
+                labelX = CGRectGetWidth(self.bounds) / 2;
+            }
+            
+            thisLabel.frame = CGRectMake(labelX, labelY, labelWidth, labelHeight);
         }
-        
-        if (currentLabelIndex % 2 == 0) { // is currentLabelIndex evenly divisible by 2?
-            // 0 or 2, so on the left
-            labelX = 0;
-        } else {
-            // 1 or 3, so on the right
-            labelX = CGRectGetWidth(self.bounds) / 2;
-        }
-        
-        thisLabel.frame = CGRectMake(labelX, labelY, labelWidth, labelHeight);
-    }
+    });
+    
 }
 
 #pragma mark - Touch Handling
