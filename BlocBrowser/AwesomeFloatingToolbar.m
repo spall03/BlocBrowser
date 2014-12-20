@@ -43,7 +43,7 @@
         
         // Make the 4 labels
         for (NSString *currentTitle in self.currentTitles) {
-            UIButton *button = [[UIButton alloc] init];
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
 //            button.userInteractionEnabled = NO;
             button.alpha = 0.25;
             
@@ -54,6 +54,7 @@
             [button setTitle:titleForThisButton forState:UIControlStateNormal];
             [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [button setBackgroundColor:colorForThisButton];
+            [button addTarget:self action:@selector(tapFired:) forControlEvents:UIControlEventTouchUpInside];
             
             
             [buttonsArray addObject:button];
@@ -95,17 +96,12 @@
 }
 
 
-- (void) tapFired:(UITapGestureRecognizer *)recognizer {
-    if (recognizer.state == UIGestureRecognizerStateRecognized) {
-        CGPoint location = [recognizer locationInView:self];
-        UIView *tappedView = [self hitTest:location withEvent:nil];
-        
-        if ([self.buttons containsObject:tappedView]) {
-            if ([self.delegate respondsToSelector:@selector(floatingToolbar:didSelectButtonWithTitle:)]) {
-                [self.delegate floatingToolbar:self didSelectButtonWithTitle:((UIButton *)tappedView).titleLabel.description];
-            }
-        }
-    }
+- (void) tapFired:(UIButton *)button
+{
+    NSLog(@"buttonpress %@", button);
+    
+    [self.delegate floatingToolbar:self didSelectButtonWithTitle:button.titleLabel.text];
+    
 }
 
 - (void) pinchFired:(UIPinchGestureRecognizer *) recognizer
