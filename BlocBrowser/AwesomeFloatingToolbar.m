@@ -114,7 +114,7 @@
         NSLog(@"New scale: %lf", scale);
         UIView *tappedView = [self hitTest:pinch withEvent:nil];
         
-        if ([tappedView isEqual:self]) {
+        if ([self.subviews containsObject:tappedView] || [self isEqual:tappedView]) {
             if ([self.delegate respondsToSelector:@selector(floatingToolbar:didPinchToolbar:)]) {
                 [self.delegate floatingToolbar:self didPinchToolbar:scale];
                 
